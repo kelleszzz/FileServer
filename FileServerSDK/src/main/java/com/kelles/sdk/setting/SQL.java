@@ -1,4 +1,4 @@
-package com.kelles.util;
+package com.kelles.sdk.setting;
 
 public class SQL {
     public final static String CREATE_TABLE=

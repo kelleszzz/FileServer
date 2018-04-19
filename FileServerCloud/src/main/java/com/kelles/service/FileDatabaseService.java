@@ -1,8 +1,7 @@
 package com.kelles.service;
 
-import com.kelles.data.FileDTO;
-import com.kelles.util.SQL;
-import com.kelles.util.Setting;
+import com.kelles.sdk.data.*;
+import com.kelles.sdk.setting.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -114,7 +113,7 @@ public class FileDatabaseService extends DatabaseService {
             logSQLMessage("Insert " + gson.toJson(fileDTOInfo(fileDTO)), SQL.INSERT);
             return rowsAffected;
         } catch (SQLException e) {
-            //当id重复时,抛出此异常
+            //当id重复或文件过大时,抛出此异常
             logSQLMessage("Insert Error, fileDTO = " + gson.toJson(fileDTOInfo(fileDTO)), SQL.INSERT, true);
 //            e.printStackTrace();
 //            return Setting.STATUS_ERROR;

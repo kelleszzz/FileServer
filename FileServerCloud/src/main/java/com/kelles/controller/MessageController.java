@@ -1,9 +1,9 @@
 package com.kelles.controller;
 
+import com.kelles.sdk.data.*;
+import com.kelles.sdk.setting.*;
 import com.kelles.component.BaseComponent;
-import com.kelles.data.FileDTO;
 import com.kelles.service.FileDatabaseService;
-import com.kelles.util.Setting;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

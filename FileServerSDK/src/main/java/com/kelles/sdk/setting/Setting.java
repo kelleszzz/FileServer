@@ -1,4 +1,4 @@
-package com.kelles.util;
+package com.kelles.sdk.setting;
 
 public class Setting {
     public final static String MYSQL_USER ="root";

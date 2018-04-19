@@ -1,4 +1,4 @@
-package com.kelles.data;
+package com.kelles.sdk.data;
 
 public class ResultDO<T> {
     Boolean success;
