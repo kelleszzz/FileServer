@@ -1,6 +1,5 @@
 package com.kelles.util;
 
-import com.kelles.data.ResultDO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

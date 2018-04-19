@@ -1,7 +1,6 @@
 package com.kelles.data;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class FileDTO {
     String id;

@@ -3,7 +3,6 @@ package com.kelles.component;
 import com.google.gson.Gson;
 import com.kelles.data.FileDTO;
 import com.kelles.data.ResultDO;
-import com.kelles.util.SQL;
 import com.kelles.util.Setting;
 import com.kelles.util.Util;
 import org.apache.commons.beanutils.BeanUtils;

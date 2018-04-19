@@ -1,11 +1,14 @@
 package com.kelles.service;
+
 import com.kelles.component.BaseComponent;
 import com.kelles.util.Setting;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 
 @Service
