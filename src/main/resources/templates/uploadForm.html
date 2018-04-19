@@ -1,0 +1,63 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<div th:if="${message}">
+		<h2 th:text="${message}"/>
+	</div>
+
+	<div>
+		<h2>上传文件</h2>
+		<form method="POST" enctype="multipart/form-data" th:action="${insertUri}">
+			<table>
+				<tr><td>File ID:</td><td><input type="text" name="id" /></td></tr>
+				<tr><td>Access Code:</td><td><input type="text" name="access_code" /></td></tr>
+				<tr><td>New File Name:</td><td><input type="text" name="file_name" /></td></tr>
+				<tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
+				<tr><td></td><td><input type="submit" value="Insert" /></td></tr>
+			</table>
+		</form>
+	</div>
+
+	<div>
+		<h2>获取文件</h2>
+		<form method="POST" enctype="multipart/form-data" th:action="${indexUri}">
+			<table>
+				<tr><td>File ID:</td><td><input type="text" name="id" /></td></tr>
+				<tr><td>Access Code:</td><td><input type="text" name="access_code" /></td></tr>
+				<tr><td></td><td><input type="submit" value="Get" /></td></tr>
+			</table>
+		</form>
+		<ul>
+			<li th:if="${file_name}">
+				<a th:href="${getCurrentFileUri}" th:text="${file_name}" />
+			</li>
+		</ul>
+	</div>
+
+	<div>
+		<h2>更新文件</h2>
+		<form method="POST" enctype="multipart/form-data" th:action="${updateUri}">
+			<table>
+				<tr><td>File ID:</td><td><input type="text" name="id" /></td></tr>
+				<tr><td>Access Code:</td><td><input type="text" name="access_code" /></td></tr>
+				<tr><td>New Access Code:</td><td><input type="text" name="new_access_code" /></td></tr>
+				<tr><td>New File Name:</td><td><input type="text" name="file_name" /></td></tr>
+				<tr><td>File to upload:</td><td><input type="file" name="file" /></td></tr>
+				<tr><td></td><td><input type="submit" value="Update" /></td></tr>
+			</table>
+		</form>
+	</div>
+
+	<div>
+		<h2>删除文件</h2>
+		<form method="POST" enctype="multipart/form-data" th:action="${removeUri}">
+			<table>
+				<tr><td>File ID:</td><td><input type="text" name="id" /></td></tr>
+				<tr><td>Access Code:</td><td><input type="text" name="access_code" /></td></tr>
+				<tr><td></td><td><input type="submit" value="Delete" /></td></tr>
+			</table>
+		</form>
+	</div>
+
+</body>
+</html>
