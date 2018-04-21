@@ -76,46 +76,6 @@ public abstract class BaseComponent {
         }
     }
 
-    public <T> ResultDO getResultDO(boolean success, Integer code, String message, Object data) {
-        ResultDO resultDO = new ResultDO();
-        resultDO.setSuccess(success);
-        resultDO.setCode(code);
-        resultDO.setMessage(message);
-        resultDO.setData(data);
-        return resultDO;
-    }
-
-    public <T> ResultDO getResultDO(boolean success, int code, String message) {
-        return getResultDO(success, code, message, null);
-    }
-
-    public <T> ResultDO getResultDO(boolean success, String message) {
-        return getResultDO(success, null, message, null);
-    }
-
-    public <T> ResultDO getResultDO(boolean success, int code) {
-        return getResultDO(success, code, null, null);
-    }
-
-    public <T> ResultDO getResultDO(boolean success) {
-        return getResultDO(success, null, null, null);
-    }
-
-    public FileDTO fileDTOInfo(FileDTO fileDTO) {
-        FileDTO fileDTOInfo = new FileDTO();
-        try {
-            BeanUtils.copyProperties(fileDTOInfo, fileDTO);
-            fileDTOInfo.setInputStream(null);
-            return fileDTOInfo;
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public boolean securityCheck(String id, String access_code, FileDTO accessFileDTO) {
         if (StringUtils.isEmpty(id) || StringUtils.isEmpty(access_code) || accessFileDTO == null
                 || StringUtils.isEmpty(accessFileDTO.getId()) || StringUtils.isEmpty(accessFileDTO.getAccess_code())) {

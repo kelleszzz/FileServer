@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 
-
+@Deprecated
 @Controller
 @RequestMapping("/message")
 public class MessageController extends BaseComponent {
@@ -41,7 +41,7 @@ public class MessageController extends BaseComponent {
             FileDTO infoFileDTO=fileDatabaseService.getFileDTO(id,false,conn);
             if (infoFileDTO!=null && !securityCheck(id,access_code,infoFileDTO)){
                 //文件存在且密码不一致
-                return gson.toJson(getResultDO(false,Setting.MESSAGE_ACCESS_DENIED));
+                return gson.toJson(Util.getResultDO(false,Setting.MESSAGE_ACCESS_DENIED));
             }
             FileDTO fileDTO = new FileDTO();
             fileDTO.setId(id);
@@ -58,10 +58,10 @@ public class MessageController extends BaseComponent {
                 rowsAffected=fileDatabaseService.insertFileDTO(fileDTO,conn);
             }
             if (rowsAffected >= 0) {
-                logger.info("Update Message, FileDTO = {}",gson.toJson(fileDTOInfo(fileDTO)));
-                return gson.toJson(getResultDO(true, rowsAffected));
+                logger.info("Update Message, FileDTO = {}",gson.toJson(Util.fileDTOInfo(fileDTO)));
+                return gson.toJson(Util.getResultDO(true, rowsAffected));
             } else {
-                return gson.toJson(getResultDO(false, rowsAffected));
+                return gson.toJson(Util.getResultDO(false, rowsAffected));
             }
         } finally {
             closeConnection(conn);
@@ -87,10 +87,10 @@ public class MessageController extends BaseComponent {
             conn = fileDatabaseService.getConnection();
             int rowsAffected = fileDatabaseService.insertFileDTO(fileDTO, conn);
             if (rowsAffected >= 0) {
-                logger.info("Insert Message, FileDTO = {}",gson.toJson(fileDTOInfo(fileDTO)));
-                return gson.toJson(getResultDO(true, rowsAffected));
+                logger.info("Insert Message, FileDTO = {}",gson.toJson(Util.fileDTOInfo(fileDTO)));
+                return gson.toJson(Util.getResultDO(true, rowsAffected));
             } else {
-                return gson.toJson(getResultDO(false, rowsAffected));
+                return gson.toJson(Util.getResultDO(false, rowsAffected));
             }
         } finally {
             closeConnection(conn);
@@ -106,11 +106,11 @@ public class MessageController extends BaseComponent {
             conn = fileDatabaseService.getConnection();
             FileDTO fileDTO = fileDatabaseService.getFileDTO(id, true, conn);
             if (fileDTO==null){
-                return gson.toJson(getResultDO(false,Setting.MESSAGE_FILE_NOT_FOUND));
+                return gson.toJson(Util.getResultDO(false,Setting.MESSAGE_FILE_NOT_FOUND));
             }
             if (!securityCheck(id,access_code,fileDTO)){
                 //安全检查
-                return gson.toJson(getResultDO(false,Setting.MESSAGE_ACCESS_DENIED));
+                return gson.toJson(Util.getResultDO(false,Setting.MESSAGE_ACCESS_DENIED));
             }
             if (fileDTO != null && fileDTO.getInputStream() != null) {
                 logger.info("Get Message, FileDTO = {}",gson.toJson(fileDTO));
@@ -121,13 +121,13 @@ public class MessageController extends BaseComponent {
                     byte[] bytes = new byte[count];
                     is.read(bytes);
                     String msg = new String(bytes, defaultCharset);
-                    return gson.toJson(getResultDO(true, null, null, msg));
+                    return gson.toJson(Util.getResultDO(true, null, null, msg));
                 }
             }
-            return gson.toJson(getResultDO(false));
+            return gson.toJson(Util.getResultDO(false));
         } catch (IOException e) {
             e.printStackTrace();
-            return gson.toJson(getResultDO(false,"Exception "+e.getMessage()));
+            return gson.toJson(Util.getResultDO(false,"Exception "+e.getMessage()));
         } finally {
             closeConnection(conn);
         }

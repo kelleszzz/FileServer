@@ -83,10 +83,10 @@ public class FileDatabaseService extends DatabaseService {
                 psUpdateContent.setString(2, fileDTO.getId());
                 rowsAffected = psUpdateContent.executeUpdate();
             }
-            logSQLMessage("Update " + gson.toJson(fileDTOInfo(fileDTO)), SQL.UPDATE_INFO);
+            logSQLMessage("Update " + gson.toJson(Util.fileDTOInfo(fileDTO)), SQL.UPDATE_INFO);
             return rowsAffected;
         } catch (SQLException e) {
-            logSQLMessage("Update Error, fileDTO = " + gson.toJson(fileDTOInfo(fileDTO)), SQL.INSERT, true);
+            logSQLMessage("Update Error, fileDTO = " + gson.toJson(Util.fileDTOInfo(fileDTO)), SQL.INSERT, true);
             e.printStackTrace();
             return Setting.STATUS_ERROR;
         } finally {
@@ -110,11 +110,11 @@ public class FileDatabaseService extends DatabaseService {
             ps.setLong(5, fileDTO.getSize());
             ps.setString(6, fileDTO.getFile_name());
             int rowsAffected = ps.executeUpdate();
-            logSQLMessage("Insert " + gson.toJson(fileDTOInfo(fileDTO)), SQL.INSERT);
+            logSQLMessage("Insert " + gson.toJson(Util.fileDTOInfo(fileDTO)), SQL.INSERT);
             return rowsAffected;
         } catch (SQLException e) {
             //当id重复或文件过大时,抛出此异常
-            logSQLMessage("Insert Error, fileDTO = " + gson.toJson(fileDTOInfo(fileDTO)), SQL.INSERT, true);
+            logSQLMessage("Insert Error, fileDTO = " + gson.toJson(Util.fileDTOInfo(fileDTO)), SQL.INSERT, true);
 //            e.printStackTrace();
 //            return Setting.STATUS_ERROR;
             return Setting.STATUS_FILE_ALREADY_EXISTS;

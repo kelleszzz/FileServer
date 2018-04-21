@@ -1,6 +1,7 @@
 package com.kelles.configuration;
 
 import com.google.gson.Gson;
+import com.kelles.sdk.setting.Setting;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,6 @@ public class BaseConfiguration {
 
     @Bean(value = "defaultCharset")
     public Charset defaultCharset(){
-        return Charset.forName("utf-8");
+        return Setting.DEFAULT_CHARSET;
     }
 }
