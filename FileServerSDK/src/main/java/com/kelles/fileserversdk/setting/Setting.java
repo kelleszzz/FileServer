@@ -29,7 +29,7 @@ public class Setting {
     public final static String MESSAGE_PARSE_JSON_ERROR = "Parse Json Error";
     public final static String MESSAGE_RESPONSE_FAILURE = "Response Failure";
 
-    public final static String URL_BASIC = "http://119.23.51.183:8080";
+    public final static String URL_BASIC = "http://localhost:8080";
     public final static String URL_FILE = "/file";
     public final static String URL_INDEX = URL_FILE + "/index";
     public final static String URL_INSERT = URL_FILE + "/insert";
