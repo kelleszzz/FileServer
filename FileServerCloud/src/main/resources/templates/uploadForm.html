@@ -30,6 +30,12 @@
 		<ul>
 			<li th:if="${file_name}">
 				<a th:href="${getCurrentFileUri}" th:text="${file_name}" />
+				<button type="button" onclick="showVideo()">Video</button>
+			</li>
+			<li id="showVideo" th:if="${file_name}" style="display: none">
+				<video th:src="${getCurrentFileUri}" width="320" height="240" controls="controls">
+					Your browser does not support the audio tag.
+				</video>
 			</li>
 		</ul>
 	</div>
@@ -58,6 +64,12 @@
 			</table>
 		</form>
 	</div>
+
+	<script>
+        function showVideo() {
+            document.getElementById("showVideo").style.display="list-item";
+        }
+	</script>
 
 </body>
 </html>

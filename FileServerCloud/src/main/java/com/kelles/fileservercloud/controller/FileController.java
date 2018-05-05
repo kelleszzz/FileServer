@@ -7,6 +7,7 @@ import com.kelles.fileserversdk.data.*;
 import com.kelles.fileserversdk.setting.*;
 import com.kelles.fileservercloud.component.BaseComponent;
 import com.kelles.fileservercloud.service.FileDatabaseService;
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -120,7 +121,6 @@ public class FileController extends BaseComponent {
                 //插入
                 if (file == null)
                     return gson.toJson(Util.getResultDO(false, Setting.STATUS_FILE_NOT_FOUND, Setting.MESSAGE_FILE_NOT_FOUND));
-                //TODO Redirect
                 model.addAttribute("id", id);
                 model.addAttribute("access_code", access_code);
                 model.addAttribute("file", file);
@@ -201,11 +201,17 @@ public class FileController extends BaseComponent {
                 fileDTO.setFile_name(fileDTO.getId());
             }
             InputStreamResource resource = new InputStreamResource(fileDTO.getInputStream());
+            //TODO 大文件无法下载
+            byte[] bytes = Util.inputStreamToBytes(resource.getInputStream());
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
                     .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)))
-                    .body(resource);
+                    .body(bytes);
+        } catch (IOException e) {
+            logger.error("Get File, id = {}, access_code = {}", id, access_code);
+            e.printStackTrace();
+            return gson.toJson(Util.getResultDO(false, Setting.STATUS_ERROR));
         } finally {
             closeConnection(conn);
         }
