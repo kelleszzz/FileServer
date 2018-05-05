@@ -1,9 +1,12 @@
-package com.kelles.controller;
+package com.kelles.fileservercloud.controller;
 
-import com.kelles.sdk.data.*;
-import com.kelles.sdk.setting.*;
-import com.kelles.component.BaseComponent;
-import com.kelles.service.FileDatabaseService;
+import com.kelles.fileserversdk.data.FileDTO;
+import com.kelles.fileserversdk.setting.Setting;
+import com.kelles.fileserversdk.setting.Util;
+import com.kelles.fileserversdk.data.*;
+import com.kelles.fileserversdk.setting.*;
+import com.kelles.fileservercloud.component.BaseComponent;
+import com.kelles.fileservercloud.service.FileDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,7 +44,7 @@ public class MessageController extends BaseComponent {
             FileDTO infoFileDTO=fileDatabaseService.getFileDTO(id,false,conn);
             if (infoFileDTO!=null && !securityCheck(id,access_code,infoFileDTO)){
                 //文件存在且密码不一致
-                return gson.toJson(Util.getResultDO(false,Setting.MESSAGE_ACCESS_DENIED));
+                return gson.toJson(Util.getResultDO(false, Setting.MESSAGE_ACCESS_DENIED));
             }
             FileDTO fileDTO = new FileDTO();
             fileDTO.setId(id);

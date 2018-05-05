@@ -1,8 +1,9 @@
-package com.kelles.service;
+package com.kelles.fileservercloud.service;
 
-import com.kelles.sdk.data.*;
-import com.kelles.sdk.setting.*;
-import com.kelles.component.BaseComponent;
+import com.kelles.fileserversdk.setting.Setting;
+import com.kelles.fileserversdk.data.*;
+import com.kelles.fileserversdk.setting.*;
+import com.kelles.fileservercloud.component.BaseComponent;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -41,6 +42,7 @@ public class DatabaseService extends BaseComponent{
             properties.setProperty("user", Setting.MYSQL_USER);
             properties.setProperty("password", Setting.MYSQL_PASSWORD);
             properties.setProperty("serverTimezone","UTC");
+            properties.setProperty("useSSL","true");
             return DriverManager.getConnection(Setting.MYSQL_URL+repoName, properties);
         } catch (SQLException e) {
             e.printStackTrace();

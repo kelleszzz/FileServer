@@ -1,4 +1,4 @@
-package com.kelles.util;
+package com.kelles.fileservercloud.util;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

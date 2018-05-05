@@ -1,4 +1,4 @@
-package com.kelles.sdk.okhttp;
+package com.kelles.fileserversdk.okhttp;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;

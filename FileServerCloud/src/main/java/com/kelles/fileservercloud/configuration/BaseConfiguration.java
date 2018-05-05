@@ -1,7 +1,7 @@
-package com.kelles.configuration;
+package com.kelles.fileservercloud.configuration;
 
 import com.google.gson.Gson;
-import com.kelles.sdk.setting.Setting;
+import com.kelles.fileserversdk.setting.Setting;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

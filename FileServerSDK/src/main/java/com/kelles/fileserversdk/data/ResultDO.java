@@ -1,4 +1,4 @@
-package com.kelles.sdk.data;
+package com.kelles.fileserversdk.data;
 
 public class ResultDO<T> {
     Boolean success;

@@ -1,9 +1,12 @@
-package com.kelles.controller;
+package com.kelles.fileservercloud.controller;
 
-import com.kelles.sdk.data.*;
-import com.kelles.sdk.setting.*;
-import com.kelles.component.BaseComponent;
-import com.kelles.service.FileDatabaseService;
+import com.kelles.fileserversdk.data.FileDTO;
+import com.kelles.fileserversdk.setting.Setting;
+import com.kelles.fileserversdk.setting.Util;
+import com.kelles.fileserversdk.data.*;
+import com.kelles.fileserversdk.setting.*;
+import com.kelles.fileservercloud.component.BaseComponent;
+import com.kelles.fileservercloud.service.FileDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -201,7 +204,7 @@ public class FileController extends BaseComponent {
             return ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
-                    .header(Setting.HEADER_FILE_SIZE, String.valueOf(fileDTO.getSize()))
+                    .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)))
                     .body(resource);
         } finally {
             closeConnection(conn);

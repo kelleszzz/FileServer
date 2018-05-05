@@ -1,7 +1,11 @@
-package com.kelles.service;
+package com.kelles.fileservercloud.service;
 
-import com.kelles.sdk.data.*;
-import com.kelles.sdk.setting.*;
+import com.kelles.fileserversdk.data.FileDTO;
+import com.kelles.fileserversdk.setting.SQL;
+import com.kelles.fileserversdk.setting.Setting;
+import com.kelles.fileserversdk.setting.Util;
+import com.kelles.fileserversdk.data.*;
+import com.kelles.fileserversdk.setting.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 

@@ -1,17 +1,20 @@
-package com.kelles.sdk.setting;
+package com.kelles.fileserversdk.setting;
 
-import com.kelles.sdk.data.FileDTO;
-import com.kelles.sdk.data.ResultDO;
-import com.sun.istack.internal.Nullable;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
+import com.kelles.fileserversdk.data.FileDTO;
+import com.kelles.fileserversdk.data.ResultDO;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 
 public class Util {
+
     /**
      * 从InputStream读取字节,写入byte数组
      * InputStream中的数据不能过大
+     *
      * @param inputStream
      * @return
      */
@@ -40,6 +43,16 @@ public class Util {
         if (bytes == null) return null;
         ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
         return bais;
+    }
+
+    public static FileDTO jsonToFileDTO(String json, Gson gson) {
+        if (json == null || gson == null) return null;
+        try {
+            FileDTO fileDTO = gson.fromJson(json, FileDTO.class);
+            return fileDTO;
+        } catch (JsonSyntaxException e) {
+            return null;
+        }
     }
 
     public static <T> ResultDO<T> getResultDO(boolean success, Integer code, String message, T data) {
@@ -104,7 +117,7 @@ public class Util {
         System.out.println(String.format(format, args));
     }
 
-    public static boolean isEmpty(@Nullable Object str) {
+    public static boolean isEmpty(Object str) {
         return str == null || "".equals(str);
     }
 }

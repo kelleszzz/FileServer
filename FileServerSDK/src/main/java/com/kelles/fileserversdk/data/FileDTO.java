@@ -1,4 +1,4 @@
-package com.kelles.sdk.data;
+package com.kelles.fileserversdk.data;
 import java.io.InputStream;
 
 public class FileDTO {

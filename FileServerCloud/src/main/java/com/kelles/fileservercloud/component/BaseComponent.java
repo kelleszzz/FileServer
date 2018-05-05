@@ -1,16 +1,16 @@
-package com.kelles.component;
+package com.kelles.fileservercloud.component;
 
 import com.google.gson.Gson;
-import com.kelles.sdk.data.*;
-import com.kelles.sdk.setting.*;
-import com.kelles.util.Util;
-import org.apache.commons.beanutils.BeanUtils;
+import com.kelles.fileserversdk.data.FileDTO;
+import com.kelles.fileserversdk.setting.Setting;
+import com.kelles.fileservercloud.util.Util;
+import com.kelles.fileserversdk.data.*;
+import com.kelles.fileserversdk.setting.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

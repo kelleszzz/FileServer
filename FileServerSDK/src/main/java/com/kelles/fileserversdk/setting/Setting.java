@@ -1,4 +1,4 @@
-package com.kelles.sdk.setting;
+package com.kelles.fileserversdk.setting;
 
 import java.nio.charset.Charset;
 
@@ -37,5 +37,5 @@ public class Setting {
     public final static String URL_UPDATE = URL_FILE + "/update";
     public final static String URL_REMOVE = URL_FILE + "/remove";
 
-    public final static String HEADER_FILE_SIZE = "File-Size";
+    public final static String HEADER_FILEDTO_INFO = "File-Info";
 }
