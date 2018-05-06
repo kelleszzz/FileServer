@@ -43,7 +43,6 @@ public class DatabaseService extends BaseComponent{
             properties.setProperty("password", Setting.MYSQL_PASSWORD);
             properties.setProperty("serverTimezone","UTC");
             properties.setProperty("useSSL","true");
-            SSLUtil.ignoreSsl();
             return DriverManager.getConnection(Setting.MYSQL_URL+repoName, properties);
         } catch (Exception e) {
             e.printStackTrace();
