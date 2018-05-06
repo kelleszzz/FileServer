@@ -43,8 +43,9 @@ public class DatabaseService extends BaseComponent{
             properties.setProperty("password", Setting.MYSQL_PASSWORD);
             properties.setProperty("serverTimezone","UTC");
             properties.setProperty("useSSL","true");
+            SSLUtil.ignoreSsl();
             return DriverManager.getConnection(Setting.MYSQL_URL+repoName, properties);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             logger.error("Connecting to MySQL error, database = {}, user = {}, password = {}", Setting.MYSQL_REPO_NAME,
                     Setting.MYSQL_USER, Setting.MYSQL_PASSWORD);
