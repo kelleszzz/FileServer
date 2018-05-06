@@ -119,9 +119,9 @@ public class FileDatabaseService extends DatabaseService {
         } catch (SQLException e) {
             //当id重复或文件过大时,抛出此异常
             logSQLMessage("Insert Error, fileDTO = " + gson.toJson(Util.fileDTOInfo(fileDTO)), SQL.INSERT, true);
-//            e.printStackTrace();
-//            return Setting.STATUS_ERROR;
-            return Setting.STATUS_FILE_ALREADY_EXISTS;
+            e.printStackTrace();
+            return Setting.STATUS_ERROR;
+//            return Setting.STATUS_FILE_ALREADY_EXISTS;
         } finally {
             closePreparedStatement(ps);
         }
