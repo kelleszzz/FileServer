@@ -185,7 +185,8 @@ public class FileController extends BaseComponent {
     @RequestMapping("/get")
     @ResponseBody
     public Object get(@RequestParam String id,
-                      @RequestParam String access_code) {
+                      @RequestParam String access_code,
+                      @RequestParam(required = false) Boolean cached) {
         Connection conn = null;
         try {
             conn = fileDatabaseService.getConnection();
@@ -201,13 +202,16 @@ public class FileController extends BaseComponent {
                 fileDTO.setFile_name(fileDTO.getId());
             }
             InputStreamResource resource = new InputStreamResource(fileDTO.getInputStream());
-            //TODO 大文件无法下载
-            byte[] bytes = Util.inputStreamToBytes(resource.getInputStream());
-            return ResponseEntity.ok()
+            ResponseEntity.BodyBuilder builder= ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
-                    .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)))
-                    .body(bytes);
+                    .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
+            if (Boolean.FALSE.equals(cached)){
+                return builder.body(resource);
+            } else {
+                byte[] bytes = Util.inputStreamToBytes(resource.getInputStream());
+                return builder.body(bytes);
+            }
         } catch (IOException e) {
             logger.error("Get File, id = {}, access_code = {}", id, access_code);
             e.printStackTrace();
