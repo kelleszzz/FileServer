@@ -21,30 +21,26 @@ public class FileDatabaseService extends DatabaseService {
     void init() {
         super.init();
         Connection conn = getConnection();
-        if (conn!=null){
+        try {
+            //建表
             try {
-                //建表
+                PreparedStatement ps = conn.prepareStatement(SQL.CREATE_TABLE);
+                int rowsAffected = ps.executeUpdate();
+                logSQLMessage("Create table " + rowsAffected);
+                ps.close();
+            } catch (SQLException e) {
+                logSQLMessage("Create table Error", SQL.CREATE_TABLE);
+                e.printStackTrace();
+            }
+        } finally {
+            if (conn != null) {
                 try {
-                    PreparedStatement ps = conn.prepareStatement(SQL.CREATE_TABLE);
-                    int rowsAffected = ps.executeUpdate();
-                    logSQLMessage("Create table " + rowsAffected);
-                    ps.close();
+                    conn.close();
                 } catch (SQLException e) {
-                    logSQLMessage("Create table Error", SQL.CREATE_TABLE);
+                    logSQLMessage("Close connection Error", true);
                     e.printStackTrace();
                 }
-            } finally {
-                if (conn != null) {
-                    try {
-                        conn.close();
-                    } catch (SQLException e) {
-                        logSQLMessage("Close connection Error", true);
-                        e.printStackTrace();
-                    }
-                }
             }
-        } else {
-            logger.error("FileDatabaseService init Error");
         }
     }
 
