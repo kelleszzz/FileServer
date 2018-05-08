@@ -1,0 +1,162 @@
+/*----------网页样式----------*/
+
+.all{
+    width: 6rem;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/*---header---*/
+.header{
+    width: 6rem;
+    height: 0.60rem;
+    background-color: #b96786;
+    position: fixed;
+    top: 0;
+    z-index: 9999;
+}
+
+.header-levitate{
+    width: 100%;
+    height: 0.60rem;
+    background-color: white;
+}
+
+.header-left {
+    width: 1.31rem;
+    height: auto;
+    margin-top: 0.19rem;
+    margin-left: 0.19rem;
+    float: left;
+}
+
+.header-middle { 
+    width: 3rem;
+    height: auto;
+    margin-top: 0.19rem;
+    float: left;
+}
+
+.header-right {
+    width: 1.26rem;
+    height: auto;
+    margin-top: 0.19rem;
+    margin-right: 0.24rem;
+    float: right;
+}
+
+/*---通用样式---*/
+.division{
+    width: 100%;
+    height: 0.02rem;
+    background-color: #d9d7d8;
+}
+
+.division-part{
+    width: 100%;
+    height: 0.24rem;
+    background-color: #d9d7d8;
+}
+
+.division-rd{
+    width: 3rem;
+    height: 0.03rem;
+    background-color: #d9d7d8;
+}
+
+.division-list{
+    width: 5.4rem;
+    height: 0.03rem;
+    background-color: #d9d7d8;
+}
+
+p{
+    color: #5b5154;
+}
+
+img{
+    width: 100%;
+    height: 100%;
+}
+
+/*--body--*/
+.resume{
+    width:100%;
+    height:1.96rem;
+    background-color: #b96786;  
+}
+
+.resume-icon{
+    width: 1.28rem;
+    height: 1.28rem;
+    margin-left: 0.3rem;
+    margin-top: 0.34rem;
+    margin-bottom: 0.34rem;
+    float: left;
+}
+
+.resume-middle{
+    width: 3rem;
+    height: 1.96rem;
+    float: left;
+    margin-left: 0.3rem;
+}
+
+.resume-right{
+    width: 1rem;
+    height: 1.96rem;
+    float: right;
+
+}
+
+.information{
+    width: 100%;
+    height: 0.62rem;
+}
+
+.information-icon{
+    width: 0.21rem;
+    height: 0.22rem;
+    margin-left: 0.3rem;
+    float: left;
+}
+
+.information-script{
+    width: auto;
+    height: 0.22rem;
+    float: left;
+}
+
+.detail{
+   width: 100%;
+   height: auto;
+}
+
+.detail-left{
+    width: 4.2rem;
+    height: auto;
+    float: left
+}
+
+
+
+.detail-right{
+    width: 1.24rem;
+    height: 0.46rem;
+    border: 0.01rem;
+    border-style: solid;
+    border-radius: 0.1rem;
+    border-color: #c83a4a;
+    background-color: white;
+    font-size: 0.22rem;
+    line-height: 0.22rem;
+    text-align: center;
+    vertical-align: center;
+    color: #c83a4a;
+    margin-top: 0.19rem;
+    margin-bottom: 0.19rem;
+    margin-right: 0.3rem;
+    float: right;
+}

@@ -1,0 +1,52 @@
+.pa{
+   font-size: 0.22rem;
+   line-height:0.22rem;
+   color: #828282;
+   margin-top: 0.2rem;
+   margin-bottom: 0.2rem;
+   margin-left: 0.1rem;
+   float: left  
+}
+
+.pb{
+    font-size: 0.22rem;
+    line-height:0.3rem; 
+    color: #5b5154;
+    margin-top: 0.27rem;
+    margin-bottom: 0.27rem; 
+    margin-left: 0.3rem;
+    float: left;
+}
+
+.pc{
+    font-size: 0.22rem;
+    font-weight: bold;
+    line-height:0.22rem; 
+    color: #5b5154;
+    margin-top: 0.27rem;
+    margin-bottom: 0.27rem; 
+    margin-left: 0.3rem;float: left;
+}
+
+.pd{
+    margin-top: 0.12rem;
+    color: #c83a4a;
+}
+
+.pe{
+    font-size:0.22rem; 
+    line-height:0.22rem;
+    color: black;
+    text-align: center;
+    margin-top: 0.27rem;
+    margin-bottom: 0.27rem
+}
+
+.pf{
+    margin-top: 0.4rem;
+    margin-left: 0.3rem;
+    margin-bottom: 0.4rem;
+    margin-right: 0.3rem;
+    font-size: 0.22rem;
+    line-height: 0.3rem;
+}

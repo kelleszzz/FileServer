@@ -1,22 +1,81 @@
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+
+    <meta name="renderer" content="webkit">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=sdge">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=yes">
+
+    <!--CSS-->
+    <link rel="stylesheet" type="text/css" href="../css/android_div.css">
+    <link rel="stylesheet" type="text/css" href="../css/android_p.css">
+    <link rel="stylesheet" type="text/css" href="../bootstrap/css/bootstrap.css">
+    <!--js-->
+    <script src="/js/flexible.js"></script>
+
+    <title>视频分享</title>
+</head>
+
+
 <body>
-<div>
-    <ul>
-        <li th:if="${file_name}">
-            <a th:href="${getCurrentFileUrl}" th:text="${file_name}" />
-            <button type="button" onclick="showVideo()">Video</button>
-        </li>
-        <li id="showVideo" th:if="${file_name}" style="display: none">
-            <video th:src="${getCurrentFileUrl}" width="320" height="240" controls="controls">
-                Your browser does not support the audio tag.
-            </video>
-        </li>
-    </ul>
+<div  class="all">
+    <div class="header">
+        <div class="header-left">
+        </div>
+        <div class="header-middle">
+            <p style=" text-align:center; font-size: 0.22rem; color: #FFFFFF; line-height: 0.22rem">视频分享</p>
+        </div>
+    </div>
+
+    <div class="header-levitate"></div>
+
+    <div style="clear: both"></div>
+
+    <div class="information">
+        <div class="information-icon">
+            <img  src="/images/checked_nd.png" style="margin-bottom: 0.2rem;margin-top: 0.2rem;float: left;" >
+        </div>
+        <div class="information-script">
+        <p  class="pa">视频列表</p>
+    </div>
 </div>
+
+<div style="clear: both"></div>
+<div class="division"></div>
+
+<div class="detail">
+    <div class="detail-left">
+        <a class="pb" id="name" th:href="${getCurrentFileUrl}" th:text="${file_name}"/>
+    </div>
+    <div class="detail-right">
+        <p  class="pd" onclick="showVideo()">点击查看</p>
+    </div>
+</div>
+
+<div style="clear: both"></div>
+
+
+<div id="showVideo" style="display:none;margin-bottom: 0.2rem">
+    <video th:src="${getCurrentFileUrl}" width="600" height="240" controls="controls">
+    </video>
+</div>
+
+<div style="clear: both"></div>
+<div class="division"></div>
+</div>
+
 <script>
+    window.onload = function () {
+        px2rem(600,600);
+    };
     function showVideo() {
-        document.getElementById("showVideo").style.display="list-item";
+        document.getElementById("showVideo").style.display="block";
     }
 </script>
+
+
+
 </body>
 </html>
