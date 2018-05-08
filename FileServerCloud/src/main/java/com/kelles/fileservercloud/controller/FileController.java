@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.sql.Connection;
 
 /**
@@ -164,7 +165,8 @@ public class FileController extends BaseController {
             InputStreamResource resource = new InputStreamResource(fileDTO.getInputStream());
             ResponseEntity.BodyBuilder builder= ResponseEntity.ok()
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
+//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + URLEncoder.encode(fileDTO.getFile_name(),"UTF-8"))
                     .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
             logger.info("Get File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             if (Boolean.FALSE.equals(cached)){
