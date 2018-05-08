@@ -3,11 +3,8 @@ package com.kelles.fileservercloud.controller;
 import com.kelles.fileserversdk.data.FileDTO;
 import com.kelles.fileserversdk.setting.Setting;
 import com.kelles.fileserversdk.setting.Util;
-import com.kelles.fileserversdk.data.*;
-import com.kelles.fileserversdk.setting.*;
 import com.kelles.fileservercloud.component.BaseComponent;
 import com.kelles.fileservercloud.service.FileDatabaseService;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.UriComponents;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -32,21 +27,10 @@ import java.sql.Connection;
  * 改变路径时,同时改变Setting中URL部分
  */
 @Controller
-@RequestMapping("/file")
-public class FileController extends BaseComponent {
+@RequestMapping(Setting.PATH_FILE)
+public class FileController extends BaseController {
 
-    @Autowired
-    FileDatabaseService fileDatabaseService;
-
-    @ModelAttribute
-    void addUrisToModel(Model model) {
-        model.addAttribute("insertUri", Setting.URL_INSERT);
-        model.addAttribute("updateUri", Setting.URL_UPDATE);
-        model.addAttribute("indexUri", Setting.URL_INDEX);
-        model.addAttribute("removeUri", Setting.URL_REMOVE);
-    }
-
-    @RequestMapping("/remove")
+    @RequestMapping(Setting.PATH_REMOVE)
     @ResponseBody
     public Object remove(@RequestParam String id,
                          @RequestParam String access_code) {
@@ -69,30 +53,6 @@ public class FileController extends BaseComponent {
         }
     }
 
-    @RequestMapping("/index")
-    public String index(@RequestParam(required = false) String id,
-                        @RequestParam(required = false) String access_code,
-                        Model model) {
-        if (!StringUtils.isEmpty(id) && !StringUtils.isEmpty(access_code)) {
-            Connection conn = null;
-            try {
-                conn = fileDatabaseService.getConnection();
-                FileDTO fileDTO = fileDatabaseService.getFileDTO(id, false, conn);
-                if (securityCheck(id, access_code, fileDTO)) {
-                    model.addAttribute("file_name", fileDTO.getFile_name());
-                    UriComponents uriComponents = UriComponentsBuilder.fromPath(Setting.URL_GET)
-                            .queryParam("id", id)
-                            .queryParam("access_code", access_code)
-                            .build();
-                    model.addAttribute("getCurrentFileUri", uriComponents.toString());
-                }
-            } finally {
-                closeConnection(conn);
-            }
-        }
-        return "uploadForm";
-    }
-
     /**
      * 不存在文件则创建,存在文件则更新
      * 这里File不会为null,只会为空文件
@@ -104,7 +64,7 @@ public class FileController extends BaseComponent {
      * @param file
      * @return
      */
-    @RequestMapping("/update")
+    @RequestMapping(Setting.PATH_UPDATE)
     @ResponseBody
     public Object update(@RequestParam String id,
                          @RequestParam String access_code,
@@ -149,7 +109,7 @@ public class FileController extends BaseComponent {
         }
     }
 
-    @RequestMapping("/insert")
+    @RequestMapping(Setting.PATH_INSERT)
     @ResponseBody
     public Object insert(@RequestParam String id,
                          @RequestParam String access_code,
@@ -182,7 +142,7 @@ public class FileController extends BaseComponent {
         }
     }
 
-    @RequestMapping("/get")
+    @RequestMapping(Setting.PATH_GET)
     @ResponseBody
     public Object get(@RequestParam String id,
                       @RequestParam String access_code,
