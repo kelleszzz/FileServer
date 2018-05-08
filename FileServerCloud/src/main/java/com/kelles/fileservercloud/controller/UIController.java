@@ -1,6 +1,5 @@
 package com.kelles.fileservercloud.controller;
 
-import com.kelles.fileservercloud.component.BaseComponent;
 import com.kelles.fileservercloud.service.FileDatabaseService;
 import com.kelles.fileserversdk.data.FileDTO;
 import com.kelles.fileserversdk.setting.Setting;
@@ -27,7 +26,7 @@ public class UIController extends BaseController {
                         @RequestParam(required = false) String access_code,
                         Model model) {
         if (!StringUtils.isEmpty(id) && !StringUtils.isEmpty(access_code)) {
-            UriComponents uriComponents = UriComponentsBuilder.fromPath(Setting.URL_SHOWFILE)
+            UriComponents uriComponents = UriComponentsBuilder.fromPath(Setting.URL_DISPLAY)
                     .queryParam("id", id)
                     .queryParam("access_code", access_code)
                     .build();
@@ -36,7 +35,7 @@ public class UIController extends BaseController {
         return "uploadForm";
     }
 
-    @RequestMapping(Setting.PATH_SHOWFILE)
+    @RequestMapping(Setting.PATH_DISPLAY)
     public String showFile(@RequestParam(required = false) String id,
                            @RequestParam(required = false) String access_code,
                            Model model) {

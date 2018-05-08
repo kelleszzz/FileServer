@@ -31,7 +31,7 @@ public class Setting {
 
     public final static String PATH_UI = "/ui";
     public final static String PATH_INDEX = "/index";
-    public final static String PATH_SHOWFILE = "/showfile";
+    public final static String PATH_DISPLAY = "/display";
     public final static String PATH_FILE = "/file";
     public final static String PATH_INSERT = "/insert";
     public final static String PATH_GET = "/get";
@@ -45,7 +45,7 @@ public class Setting {
     public final static String URL_UPDATE = PATH_FILE + PATH_UPDATE;
     public final static String URL_REMOVE = PATH_FILE + PATH_REMOVE;
     public final static String URL_INDEX = PATH_UI + PATH_INDEX;
-    public final static String URL_SHOWFILE = PATH_UI + PATH_SHOWFILE;
+    public final static String URL_DISPLAY = PATH_UI + PATH_DISPLAY;
 
     public final static String HEADER_FILEDTO_INFO = "File-Info";
 }
