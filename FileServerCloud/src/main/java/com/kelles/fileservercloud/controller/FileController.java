@@ -1,17 +1,17 @@
 package com.kelles.fileservercloud.controller;
 
 import com.kelles.fileserversdk.data.FileDTO;
+import com.kelles.fileserversdk.data.ResultDO;
 import com.kelles.fileserversdk.setting.Setting;
 import com.kelles.fileserversdk.setting.Util;
 import com.kelles.fileservercloud.component.BaseComponent;
 import com.kelles.fileservercloud.service.FileDatabaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +20,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.sql.Connection;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 改变路径时,同时改变Setting中URL部分
@@ -30,6 +34,8 @@ import java.sql.Connection;
 @Controller
 @RequestMapping(Setting.PATH_FILE)
 public class FileController extends BaseController {
+
+    protected static final Pattern PATTERN_RANGE = Pattern.compile("bytes=(\\d*)-(\\d*)");
 
     @RequestMapping(Setting.PATH_REMOVE)
     @ResponseBody
@@ -143,12 +149,25 @@ public class FileController extends BaseController {
         }
     }
 
+    /**
+     * TODO 目前所有InputStream都是cached
+     * 支持断点续传
+     *
+     * @param id
+     * @param access_code
+     * @param request
+     * @return
+     */
     @RequestMapping(Setting.PATH_GET)
     @ResponseBody
     public Object get(@RequestParam String id,
                       @RequestParam String access_code,
-                      @RequestParam(required = false) Boolean cached) {
+                      HttpServletRequest request) {
         Connection conn = null;
+        InputStreamResource resource;
+        InputStream inputStream;
+        ResponseEntity.BodyBuilder builder = null;
+        byte[] bytes = null;
         try {
             conn = fileDatabaseService.getConnection();
             FileDTO fileDTO = fileDatabaseService.getFileDTO(id, true, conn);
@@ -162,19 +181,50 @@ public class FileController extends BaseController {
                 //修改文件名
                 fileDTO.setFile_name(fileDTO.getId());
             }
-            InputStreamResource resource = new InputStreamResource(fileDTO.getInputStream());
-            ResponseEntity.BodyBuilder builder= ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType("application/octet-stream"))
-//                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + URLEncoder.encode(fileDTO.getFile_name(),"UTF-8"))
-                    .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
-            logger.info("Get File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
-            if (Boolean.FALSE.equals(cached)){
-                return builder.body(resource);
-            } else {
-                byte[] bytes = Util.inputStreamToBytes(resource.getInputStream());
-                return builder.body(bytes);
+            inputStream = fileDTO.getInputStream();
+            resource = new InputStreamResource(inputStream);
+            if (inputStream.available() != fileDTO.getSize().intValue()) {
+                logger.error("Get File, available does not match file size, available = {}, fileSize = {}", inputStream.available(), fileDTO.getSize());
             }
+            if (request.getHeader("Range") != null) {
+                //断点续传
+                Matcher matcher = PATTERN_RANGE.matcher(request.getHeader("Range"));
+                if (!matcher.matches()) {
+                    return gson.toJson(Util.getResultDO(false, Setting.STATUS_ERROR, "Pattern not Match"));
+                }
+                //[start,end]
+                long start, end;
+                //start
+                try {
+                    start = Long.valueOf(matcher.group(1));
+                } catch (NumberFormatException e) {
+                    start = 0;
+                }
+                //end
+                try {
+                    end = Long.valueOf(matcher.group(2));
+                } catch (NumberFormatException e) {
+                    //TODO 保证FileSize可靠
+                    end = fileDTO.getSize() - 1;
+                }
+                //builder
+                bytes = Util.inputStreamToBytes(inputStream, start, end);
+                String contentRange = new StringBuffer("bytes ").append(start + "").append("-").append(end + "").append("/").append(fileDTO.getSize() + "").toString();
+                builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
+                builder.header("Content-Range", contentRange);
+                logger.info("Get File, contentRange = {}", contentRange);
+            } else {
+                //builder
+                bytes = Util.inputStreamToBytes(resource.getInputStream());
+                builder = ResponseEntity.ok();
+            }
+            builder = builder
+                    .contentType(MediaType.parseMediaType("application/octet-stream"))
+                    //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + URLEncoder.encode(fileDTO.getFile_name(), "UTF-8"))
+                    .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
+            logger.info("Get File, fileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
+            return builder.body(bytes);
         } catch (IOException e) {
             logger.error("Get File, id = {}, access_code = {}", id, access_code);
             e.printStackTrace();
