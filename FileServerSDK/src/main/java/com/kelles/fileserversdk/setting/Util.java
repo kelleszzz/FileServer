@@ -11,6 +11,49 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Util {
 
+    protected final static int BUFFER_SIZE = 1024;
+
+    /**
+     * [start,end]
+     * end超过InputStream最后一字节范围时,读取全部InputStream
+     * start超过InputStream最后一字节范围时,抛出ArrayIndexOutOfBoundsException
+     *
+     * @param inputStream
+     * @param start
+     * @param end
+     * @return
+     */
+    public static byte[] inputStreamToBytes(InputStream inputStream, long start, long end) throws IOException {
+        if (inputStream == null) throw new NullPointerException("InputStream Null");
+        if (start < 0 || start > end) throw new ArrayIndexOutOfBoundsException("inputStreamToBytes out of Bounds");
+        try {
+            //skip
+            for (long remaining = start; remaining > 0; ) {
+                long ns = inputStream.skip(remaining);
+                if (ns == 0 && remaining > 0) {
+                    throw new IOException("InputStream Aborted while Skipping Bytes");
+                } else if (ns == 0) {
+                    throw new ArrayIndexOutOfBoundsException("InputStream Read to End while Skipping Bytes");
+                }
+                remaining -= ns;
+            }
+            //read
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            for (long remaining = end - start + 1; remaining > 0; ) {
+                int ntr = BUFFER_SIZE < remaining ? BUFFER_SIZE : (int) remaining;
+                byte[] bytes = new byte[ntr];
+                int nr = inputStream.read(bytes, 0, ntr);
+                if (nr == -1) break;
+                baos.write(bytes, 0, nr);
+                remaining -= nr;
+            }
+            return baos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     /**
      * 从InputStream读取字节,写入byte数组
      * InputStream中的数据不能过大
@@ -18,20 +61,8 @@ public class Util {
      * @param inputStream
      * @return
      */
-    public static byte[] inputStreamToBytes(InputStream inputStream) {
-        if (inputStream == null) return null;
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            for (byte[] bytes = new byte[1024]; ; ) {
-                int bytesRead = inputStream.read(bytes);
-                if (bytesRead == -1) break;
-                baos.write(bytes, 0, bytesRead);
-            }
-            return baos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public static byte[] inputStreamToBytes(InputStream inputStream) throws IOException {
+        return inputStreamToBytes(inputStream, 0, Long.MAX_VALUE - 1);
     }
 
     public static InputStream stringToInputStream(String msg) {
