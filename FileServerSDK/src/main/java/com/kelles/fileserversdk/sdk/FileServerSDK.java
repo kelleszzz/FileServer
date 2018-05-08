@@ -103,12 +103,13 @@ public class FileServerSDK implements Closeable {
 
     /**
      * 获取displayFile链接
+     *
      * @param id
      * @param access_code
      * @return
      */
-    public String getDisplay(String id, String access_code){
-        HttpUrl httpUrl = HttpUrl.parse(Setting.URL_DISPLAY).newBuilder()
+    public String getDisplay(String id, String access_code) {
+        HttpUrl httpUrl = HttpUrl.parse(Setting.URL_BASIC + Setting.PATH_UI + Setting.PATH_DISPLAY).newBuilder()
                 .addQueryParameter("id", id)
                 .addQueryParameter("access_code", access_code)
                 .build();
@@ -175,7 +176,7 @@ public class FileServerSDK implements Closeable {
             response = client.newCall(request).execute();
             resultDO = responseToResultDO(response);
             resultDO.setData(response);
-            if (resultDO.getSuccess()){
+            if (resultDO.getSuccess()) {
                 Util.log("Update fileDTO = %s, \nresult = %s", gson.toJson(Util.fileDTOInfo(fileDTO)), gson.toJson(Util.resultDOInfo(resultDO)));
                 return resultDO;
             }
@@ -255,7 +256,7 @@ public class FileServerSDK implements Closeable {
             Util.log("ResponseToResultDO Error, code = %s", response == null ? "null" : String.valueOf(response.code()));
             resultDO = Util.getResultDO(false, Setting.STATUS_RESPONSE_FAILURE, Setting.MESSAGE_RESPONSE_FAILURE);
         }
-        if (resultDO==null) throw new NullPointerException("responseToResultDO is NULL!");
+        if (resultDO == null) throw new NullPointerException("responseToResultDO is NULL!");
         return resultDO;
     }
 
