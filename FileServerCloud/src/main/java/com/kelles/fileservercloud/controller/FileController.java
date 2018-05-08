@@ -166,6 +166,7 @@ public class FileController extends BaseController {
                     .contentType(MediaType.parseMediaType("application/octet-stream"))
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
                     .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
+            logger.info("Get File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             if (Boolean.FALSE.equals(cached)){
                 return builder.body(resource);
             } else {
