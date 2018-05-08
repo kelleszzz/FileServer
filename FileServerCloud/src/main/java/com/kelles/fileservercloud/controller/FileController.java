@@ -150,7 +150,7 @@ public class FileController extends BaseController {
     }
 
     /**
-     * TODO 目前所有InputStream都是cached
+     * TODO 目前所有InputStream都是cached;需要保证FileSize可靠
      * 支持断点续传
      *
      * @param id
@@ -208,11 +208,16 @@ public class FileController extends BaseController {
                     end = fileDTO.getSize() - 1;
                 }
                 //builder
-                bytes = Util.inputStreamToBytes(inputStream, start, end);
+                try {
+                    bytes = Util.inputStreamToBytes(inputStream, start, end);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    logger.error("Get File, Range not Satified, Range = {}, fileDTO = {}", request.getHeader("Range"), Util.fileDTOInfo(fileDTO));
+                    return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+                }
                 String contentRange = new StringBuilder("bytes ").append(start + "").append("-").append(end + "").append("/").append(fileDTO.getSize() + "").toString();
                 builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
                 builder.header("Content-Range", contentRange);
-                builder.header("Accept-Ranges", "0-" + fileDTO.getSize());
+                builder.header("Accept-Ranges", "bytes");
                 logger.info("Get File, contentRange = {}", contentRange);
             } else {
                 //builder
