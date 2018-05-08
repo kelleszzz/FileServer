@@ -209,9 +209,10 @@ public class FileController extends BaseController {
                 }
                 //builder
                 bytes = Util.inputStreamToBytes(inputStream, start, end);
-                String contentRange = new StringBuffer("bytes ").append(start + "").append("-").append(end + "").append("/").append(fileDTO.getSize() + "").toString();
+                String contentRange = new StringBuilder("bytes ").append(start + "").append("-").append(end + "").append("/").append(fileDTO.getSize() + "").toString();
                 builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
                 builder.header("Content-Range", contentRange);
+                builder.header("Accept-Ranges", "0-" + fileDTO.getSize());
                 logger.info("Get File, contentRange = {}", contentRange);
             } else {
                 //builder
