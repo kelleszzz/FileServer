@@ -36,9 +36,9 @@ public class UIController extends BaseController {
     }
 
     @RequestMapping(Setting.PATH_DISPLAY)
-    public String showFile(@RequestParam(required = false) String id,
-                           @RequestParam(required = false) String access_code,
-                           Model model) {
+    public String display(@RequestParam(required = false) String id,
+                          @RequestParam(required = false) String access_code,
+                          Model model) {
         if (!StringUtils.isEmpty(id) && !StringUtils.isEmpty(access_code)) {
             Connection conn = null;
             try {

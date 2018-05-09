@@ -218,7 +218,7 @@ public class FileController extends BaseController {
                 builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
                 builder.header("Content-Range", contentRange);
                 builder.header("Accept-Ranges", "bytes");
-                logger.info("Get File, contentRange = {}", contentRange);
+                logger.info("Get File, request Range = {}, response contentRange = {}", contentRange);
             } else {
                 //builder
                 bytes = Util.inputStreamToBytes(resource.getInputStream());
