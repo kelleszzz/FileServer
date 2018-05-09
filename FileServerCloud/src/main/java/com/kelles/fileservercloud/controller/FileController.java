@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.sql.Connection;
+import java.util.Enumeration;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 public class FileController extends BaseController {
 
     protected static final Pattern PATTERN_RANGE = Pattern.compile("bytes=(\\d*)-(\\d*)");
+    protected static final Pattern PATTERN_FILENAME = Pattern.compile("(.*)\\.(.+)");
 
     @RequestMapping(Setting.PATH_REMOVE)
     @ResponseBody
@@ -155,6 +157,7 @@ public class FileController extends BaseController {
      *
      * @param id
      * @param access_code
+     * @param video       为true时,返回Content-Type是"video/mp4",否则返回"application/octet-stream"
      * @param request
      * @return
      */
@@ -162,6 +165,7 @@ public class FileController extends BaseController {
     @ResponseBody
     public Object get(@RequestParam String id,
                       @RequestParam String access_code,
+                      @RequestParam(required = false) Boolean video,
                       HttpServletRequest request) {
         Connection conn = null;
         InputStreamResource resource;
@@ -177,8 +181,10 @@ public class FileController extends BaseController {
             if (!securityCheck(id, access_code, fileDTO)) {
                 return ResponseEntity.ok().body(gson.toJson(Util.getResultDO(false, Setting.STATUS_ACCESS_DENIED, Setting.MESSAGE_ACCESS_DENIED)));
             }
-            if (StringUtils.isEmpty(fileDTO.getFile_name()) || Setting.TYPE_MESSAGE.equals(fileDTO.getFile_name())) {
-                //修改文件名
+            if (fileDTO.getSize() == null) {
+                return ResponseEntity.ok().body(gson.toJson(Util.getResultDO(false, Setting.STATUS_FILE_SIZE_INVALID, Setting.MESSAGE_FILE_SIZE_INVALID)));
+            }
+            if (StringUtils.isEmpty(fileDTO.getFile_name())) {
                 fileDTO.setFile_name(fileDTO.getId());
             }
             inputStream = fileDTO.getInputStream();
@@ -207,7 +213,7 @@ public class FileController extends BaseController {
                     //TODO 保证FileSize可靠
                     end = fileDTO.getSize() - 1;
                 }
-                //builder
+                //Response Headers of Range-Request
                 try {
                     bytes = Util.inputStreamToBytes(inputStream, start, end);
                 } catch (ArrayIndexOutOfBoundsException e) {
@@ -218,17 +224,28 @@ public class FileController extends BaseController {
                 builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
                 builder.header("Content-Range", contentRange);
                 builder.header("Accept-Ranges", "bytes");
-                logger.info("Get File, request Range = {}, response contentRange = {}", contentRange);
+                logger.info("Get File, request Range = {}, response contentRange = {}", request.getHeader("Range"), contentRange);
             } else {
-                //builder
+                //正常获取
                 bytes = Util.inputStreamToBytes(resource.getInputStream());
                 builder = ResponseEntity.ok();
             }
+            //Response Headers in common
             builder = builder
-                    .contentType(MediaType.parseMediaType("application/octet-stream"))
                     //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + URLEncoder.encode(fileDTO.getFile_name(), "UTF-8"))
                     .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
+            //Content-Type
+            if (Boolean.TRUE.equals(video)) {
+                Matcher matcher = PATTERN_FILENAME.matcher(fileDTO.getFile_name());
+                if (matcher.matches()){
+                    builder.contentType(MediaType.parseMediaType("video/" +matcher.group(2)));
+                } else {
+                    builder.contentType(MediaType.parseMediaType("application/octet-stream"));
+                }
+            } else {
+                builder.contentType(MediaType.parseMediaType("application/octet-stream"));
+            }
             logger.info("Get File, fileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             return builder.body(bytes);
         } catch (IOException e) {

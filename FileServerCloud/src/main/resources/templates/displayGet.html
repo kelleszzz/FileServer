@@ -47,7 +47,7 @@
 
 <div class="detail">
     <div class="detail-left">
-        <a class="pb" id="name" th:href="${getCurrentFileUrl}" th:text="${file_name}"/>
+        <a th:if="${getCurrentFileUrl}" class="pb" id="name" th:href="${getCurrentFileUrl}" th:text="${file_name}"/>
     </div>
     <div class="detail-right">
         <p  class="pd" onclick="showVideo()">点击查看</p>
@@ -58,7 +58,7 @@
 
 
 <div id="showVideo" style="display:none;margin-bottom: 0.2rem">
-    <video th:src="${getCurrentFileUrl}" width="600" height="240" controls="controls">
+    <video th:if="${getCurrentVideoUrl}" th:src="${getCurrentVideoUrl}" width="600" height="240" controls="controls">
     </video>
 </div>
 

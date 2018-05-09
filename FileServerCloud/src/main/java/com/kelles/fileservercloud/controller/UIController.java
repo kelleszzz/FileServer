@@ -46,11 +46,11 @@ public class UIController extends BaseController {
                 FileDTO fileDTO = fileDatabaseService.getFileDTO(id, false, conn);
                 if (securityCheck(id, access_code, fileDTO)) {
                     model.addAttribute("file_name", fileDTO.getFile_name());
-                    UriComponents uriComponents = UriComponentsBuilder.fromPath(Setting.URL_GET)
+                    UriComponentsBuilder builder = UriComponentsBuilder.fromPath(Setting.URL_GET)
                             .queryParam("id", id)
-                            .queryParam("access_code", access_code)
-                            .build();
-                    model.addAttribute("getCurrentFileUrl", uriComponents.toString());
+                            .queryParam("access_code", access_code);
+                    model.addAttribute("getCurrentFileUrl", builder.build().toString());
+                    model.addAttribute("getCurrentVideoUrl",builder.queryParam("video","true").build().toString());
                 }
             } finally {
                 closeConnection(conn);

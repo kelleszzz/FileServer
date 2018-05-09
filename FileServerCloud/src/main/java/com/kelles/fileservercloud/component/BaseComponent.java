@@ -11,10 +11,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Enumeration;
 
 public abstract class BaseComponent {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -76,7 +78,7 @@ public abstract class BaseComponent {
         }
     }
 
-    public boolean securityCheck(String id, String access_code, FileDTO accessFileDTO) {
+    protected boolean securityCheck(String id, String access_code, FileDTO accessFileDTO) {
         if (StringUtils.isEmpty(id) || StringUtils.isEmpty(access_code) || accessFileDTO == null
                 || StringUtils.isEmpty(accessFileDTO.getId()) || StringUtils.isEmpty(accessFileDTO.getAccess_code())) {
             return false;
@@ -84,9 +86,19 @@ public abstract class BaseComponent {
         return id.equals(accessFileDTO.getId()) && access_code.equals(accessFileDTO.getAccess_code());
     }
 
-    public boolean securityCheck(FileDTO fileDTO) {
+    protected boolean securityCheck(FileDTO fileDTO) {
         if (fileDTO == null || StringUtils.isEmpty(fileDTO.getId()) || StringUtils.isEmpty(fileDTO.getAccess_code()))
             return false;
         return true;
+    }
+
+    protected String getHeaderValues(HttpServletRequest request) {
+        Enumeration<String> enumeration = request.getHeaderNames();
+        StringBuilder sb = new StringBuilder();
+        for (; enumeration.hasMoreElements(); ) {
+            String header = enumeration.nextElement();
+            sb.append(header + " = " + request.getHeader(header) + "\n");
+        }
+        return sb.toString();
     }
 }

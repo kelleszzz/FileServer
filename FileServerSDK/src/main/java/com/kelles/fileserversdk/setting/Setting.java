@@ -21,6 +21,7 @@ public class Setting {
     public final static int STATUS_FILE_ALREADY_EXISTS = -5;
     public final static int STATUS_PARSE_JSON_ERROR = -6;
     public final static int STATUS_RESPONSE_FAILURE = -7;
+    public final static int STATUS_FILE_SIZE_INVALID = -8;
 
     public final static String MESSAGE_FILE_NOT_FOUND = "File Not Found";
     public final static String MESSAGE_ACCESS_DENIED = "Access Denied";
@@ -28,6 +29,7 @@ public class Setting {
     public final static String MESSAGE_INVALID_PARAMETER = "Invalid Parameter";
     public final static String MESSAGE_PARSE_JSON_ERROR = "Parse Json Error";
     public final static String MESSAGE_RESPONSE_FAILURE = "Response Failure";
+    public final static String MESSAGE_FILE_SIZE_INVALID = "File Size Invalid";
 
     public final static String PATH_UI = "/ui";
     public final static String PATH_INDEX = "/index";
