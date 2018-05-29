@@ -57,13 +57,12 @@ public class FileController extends BaseController {
 
     /**
      * 不存在文件则创建,存在文件则更新
-     * 这里File不会为null,只会为空文件
      *
      * @param id
      * @param access_code
      * @param new_access_code
      * @param file_name
-     * @param file
+     * @param file            这里File不会为null,只会为空文件,getSize()返回0
      * @return
      */
     @RequestMapping(Setting.PATH_UPDATE)
@@ -81,7 +80,7 @@ public class FileController extends BaseController {
             FileDTO infoFileDTO = fileDatabaseService.getFileDTO(id, false, conn);
             if (infoFileDTO == null) {
                 //插入
-                if (file == null)
+                if (file == null || file.getSize() == 0)
                     return gson.toJson(Util.getResultDO(false, Setting.STATUS_FILE_NOT_FOUND, Setting.MESSAGE_FILE_NOT_FOUND));
                 model.addAttribute("id", id);
                 model.addAttribute("access_code", access_code);
@@ -95,10 +94,17 @@ public class FileController extends BaseController {
             //更新
             fileDTO = new FileDTO();
             fileDTO.setId(id);
-            fileDTO.setAccess_code(new_access_code);
-            fileDTO.setFile_name(file_name);
-            fileDTO.setInputStream(file.getInputStream());
-            fileDTO.setSize(file.getSize());
+            if (!Util.isEmpty(new_access_code)) {
+                fileDTO.setAccess_code(new_access_code);
+            }
+            if (file != null && file.getSize() > 0) {
+                fileDTO.setInputStream(file.getInputStream());
+                fileDTO.setSize(file.getSize());
+                fileDTO.setFile_name(file.getOriginalFilename());
+            }
+            if (!Util.isEmpty(file_name)) {
+                fileDTO.setFile_name(file_name);
+            }
             int rowsAffected = fileDatabaseService.updateFileDTO(fileDTO, infoFileDTO, conn);
             logger.info("Update File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             return gson.toJson(Util.getResultDO(rowsAffected > 0, rowsAffected));
@@ -128,10 +134,14 @@ public class FileController extends BaseController {
             fileDTO = new FileDTO();
             fileDTO.setId(id);
             fileDTO.setAccess_code(access_code);
-            if (!StringUtils.isEmpty(file_name)) fileDTO.setFile_name(file_name);
-            else fileDTO.setFile_name(file.getOriginalFilename());
-            fileDTO.setInputStream(file.getInputStream());
-            fileDTO.setSize(file.getSize());
+            if (file != null && file.getSize() > 0) {
+                fileDTO.setInputStream(file.getInputStream());
+                fileDTO.setSize(file.getSize());
+                fileDTO.setFile_name(file.getOriginalFilename());
+            }
+            if (!StringUtils.isEmpty(file_name)) {
+                fileDTO.setFile_name(file_name);
+            }
             int rowsAffected = fileDatabaseService.insertFileDTO(fileDTO, conn);
             logger.info("Insert File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             return gson.toJson(Util.getResultDO(rowsAffected > 0, rowsAffected));
@@ -231,8 +241,8 @@ public class FileController extends BaseController {
             //Content-Type
             if (Boolean.TRUE.equals(video)) {
                 Matcher matcher = PATTERN_FILENAME.matcher(fileDTO.getFile_name());
-                if (matcher.matches()){
-                    builder.contentType(MediaType.parseMediaType("video/" +matcher.group(2)));
+                if (matcher.matches()) {
+                    builder.contentType(MediaType.parseMediaType("video/" + matcher.group(2)));
                 } else {
                     builder.contentType(MediaType.parseMediaType("application/octet-stream"));
                 }

@@ -30,6 +30,11 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
+                <groupId>com.kelles.fileserver</groupId>
+                <artifactId>fileserversdk</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>8.0.11</version>
@@ -47,6 +52,7 @@
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
+                <version>3.9.1</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

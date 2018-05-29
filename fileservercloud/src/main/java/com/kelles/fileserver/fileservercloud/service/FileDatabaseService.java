@@ -48,11 +48,11 @@ public class FileDatabaseService extends DatabaseService {
 
     /**
      * @param fileDTO
-     * @param infoFileDTO 传入时,不再执行一次SELECT
+     * @param accessFileDTO 传入时,不再执行一次SELECT
      * @param conn
      * @return
      */
-    public int updateFileDTO(FileDTO fileDTO, FileDTO infoFileDTO, Connection conn) {
+    public int updateFileDTO(FileDTO fileDTO, FileDTO accessFileDTO, Connection conn) {
         if (fileDTO == null || StringUtils.isEmpty(fileDTO.getId()) || conn == null)
             return Setting.STATUS_INVALID_PARAMETER;
         boolean success = false;
@@ -60,29 +60,26 @@ public class FileDatabaseService extends DatabaseService {
         int rowsAffected = Setting.STATUS_ERROR;
         try {
             //查找原文件
-            if (infoFileDTO == null || StringUtils.isEmpty(infoFileDTO.getId()) || !infoFileDTO.getId().equals(fileDTO.getId())) {
-                infoFileDTO = getFileDTO(fileDTO.getId(), false, conn);
+            if (accessFileDTO == null || StringUtils.isEmpty(accessFileDTO.getId()) || !accessFileDTO.getId().equals(fileDTO.getId())) {
+                accessFileDTO = getFileDTO(fileDTO.getId(), false, conn);
             }
-            if (infoFileDTO == null) return Setting.STATUS_FILE_NOT_FOUND;
-            if (!StringUtils.isEmpty(fileDTO.getAccess_code()))
-                infoFileDTO.setAccess_code(fileDTO.getAccess_code());
-            if (fileDTO.getCreate_time() != null)
-                infoFileDTO.setCreate_time(fileDTO.getCreate_time());
-            if (fileDTO.getSize() != null) infoFileDTO.setSize(fileDTO.getSize());
-            if (!StringUtils.isEmpty(fileDTO.getFile_name())) infoFileDTO.setFile_name(fileDTO.getFile_name());
+            if (accessFileDTO == null) return Setting.STATUS_FILE_NOT_FOUND;
+            if (!fileDTO.getId().equals(accessFileDTO.getId())) return Setting.STATUS_ACCESS_DENIED;
+            //TODO 更新域
+            Util.updateDTO(fileDTO, accessFileDTO);
             //更新信息
             psUpdateInfo = conn.prepareStatement(SQL.UPDATE_INFO);
-            psUpdateInfo.setString(1, infoFileDTO.getAccess_code());
-            psUpdateInfo.setLong(2, infoFileDTO.getCreate_time());
-            psUpdateInfo.setLong(3, infoFileDTO.getSize());
-            psUpdateInfo.setString(4, infoFileDTO.getFile_name());
-            psUpdateInfo.setString(5, infoFileDTO.getId());
+            psUpdateInfo.setString(1, accessFileDTO.getAccess_code());
+            psUpdateInfo.setLong(2, accessFileDTO.getCreate_time());
+            psUpdateInfo.setLong(3, accessFileDTO.getSize());
+            psUpdateInfo.setString(4, accessFileDTO.getFile_name());
+            psUpdateInfo.setString(5, accessFileDTO.getId());
             rowsAffected = psUpdateInfo.executeUpdate();
             //更新文件内容
-            if (fileDTO.getInputStream() != null) {
+            if (accessFileDTO.getInputStream() != null) {
                 psUpdateContent = conn.prepareStatement(SQL.UPDATE_CONTENT);
-                psUpdateContent.setBinaryStream(1, fileDTO.getInputStream());
-                psUpdateContent.setString(2, fileDTO.getId());
+                psUpdateContent.setBinaryStream(1, accessFileDTO.getInputStream());
+                psUpdateContent.setString(2, accessFileDTO.getId());
                 rowsAffected = psUpdateContent.executeUpdate();
             }
             logSQLMessage("Update " + gson.toJson(Util.fileDTOInfo(fileDTO)), SQL.UPDATE_INFO);
@@ -99,7 +96,6 @@ public class FileDatabaseService extends DatabaseService {
 
     public int insertFileDTO(FileDTO fileDTO, Connection conn) {
         if (!securityCheck(fileDTO) || conn == null) return Setting.STATUS_INVALID_PARAMETER;
-        boolean success = false;
         PreparedStatement ps = null;
         try {
             ps = conn.prepareStatement(SQL.INSERT);
@@ -133,7 +129,7 @@ public class FileDatabaseService extends DatabaseService {
             else ps = conn.prepareStatement(SQL.SELECT_NO_CONTENT);
             ps.setString(1, id);
             ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
+            if (rs.next()) {
                 FileDTO fileDTO = new FileDTO();
                 fileDTO.setId(id);
                 fileDTO.setAccess_code(rs.getString("access_code"));

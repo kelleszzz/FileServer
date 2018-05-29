@@ -7,6 +7,7 @@ import com.kelles.fileserver.fileserversdk.data.ResultDO;
 import org.apache.commons.beanutils.BeanUtils;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
@@ -15,6 +16,29 @@ import java.lang.reflect.InvocationTargetException;
 public class Util {
 
     protected final static int BUFFER_SIZE = 1024;
+
+
+    /**
+     *  利用反射,将updateDTO中所有非空的域更新到originDTO中
+     * @param updateDTO
+     * @param originDTO
+     */
+    public static void updateDTO(Object updateDTO, Object originDTO) {
+        if (updateDTO == null || originDTO == null) return;
+        Field[] fields = updateDTO.getClass().getDeclaredFields();
+        if (fields == null) return;
+        for (Field field : fields) {
+            try {
+                field.setAccessible(true);
+                Object value = field.get(updateDTO);
+                if (value != null) {
+                    field.set(originDTO, value);
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     /**
      * [start,end]
@@ -26,7 +50,7 @@ public class Util {
      * @param end
      * @return
      */
-    public static byte[] inputStreamToBytes(InputStream inputStream, long start, long end) throws IOException {
+    public static byte[] inputStreamToBytes(InputStream inputStream, long start, long end) {
         if (inputStream == null) throw new NullPointerException("InputStream Null");
         if (start < 0 || start > end) throw new ArrayIndexOutOfBoundsException("inputStreamToBytes out of Bounds");
         try {
@@ -64,7 +88,7 @@ public class Util {
      * @param inputStream
      * @return
      */
-    public static byte[] inputStreamToBytes(InputStream inputStream) throws IOException {
+    public static byte[] inputStreamToBytes(InputStream inputStream) {
         return inputStreamToBytes(inputStream, 0, Long.MAX_VALUE - 1);
     }
 
