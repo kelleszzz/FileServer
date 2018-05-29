@@ -57,7 +57,7 @@ public class FileServerSDK implements Closeable {
      * @param access_code
      * @return
      */
-    public ResultDO<FileDTO> get(String id, String access_code) {
+    public ResultDO<FileDTO> get(String id, String access_code, boolean getContent) {
         if (Util.isEmpty(id) || Util.isEmpty(access_code)) {
             return Util.<FileDTO>getResultDO(false, Setting.STATUS_INVALID_PARAMETER, Setting.MESSAGE_INVALID_PARAMETER);
         }
@@ -68,6 +68,7 @@ public class FileServerSDK implements Closeable {
             HttpUrl httpUrl = HttpUrl.parse(Setting.URL_BASIC + Setting.URL_GET).newBuilder()
                     .addQueryParameter("id", id)
                     .addQueryParameter("access_code", access_code)
+                    .addQueryParameter("getContent", String.valueOf(getContent))
                     .build();
             Request request = new Request.Builder().url(httpUrl).build();
             response = client.newCall(request).execute();
@@ -84,7 +85,9 @@ public class FileServerSDK implements Closeable {
                     Util.log("Get Error, accessId = %s, id = %s, access_code = %s", fileDTO.getId(), id, access_code);
                     return Util.getResultDO(false, Setting.STATUS_ACCESS_DENIED, Setting.MESSAGE_ACCESS_DENIED);
                 }
-                fileDTO.setInputStream(response.body().byteStream());
+                if (getContent) {
+                    fileDTO.setInputStream(response.body().byteStream());
+                }
                 resultDO = Util.getResultDO(true, null, null, fileDTO);
                 Util.log("Get fileDTO = %s, \nresult = %s", gson.toJson(Util.fileDTOInfo(fileDTO)), gson.toJson(Util.resultDOInfo(resultDO)));
                 return resultDO;
@@ -99,6 +102,10 @@ public class FileServerSDK implements Closeable {
         } finally {
 //            if (response != null) response.close();
         }
+    }
+
+    public ResultDO<FileDTO> get(String id, String access_code) {
+        return get(id, access_code, true);
     }
 
     /**

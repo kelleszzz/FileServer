@@ -24,16 +24,17 @@ public class FileServerSDKTest {
     String testFileName = "congratulations.txt";
     String testContent = "Congratulations, you passed the test!";
 
-    public static void main(String[] args){
-        FileServerSDKTest test=new FileServerSDKTest();
+    public static void main(String[] args) {
+        FileServerSDKTest test = new FileServerSDKTest();
         try {
             test.test1_Insert();
             test.test2_Get();
-            test.test3_Update();
+            test.test3_Get_No_Content();
+            test.test4_Update();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            test.test4_Remove();
+            test.test5_Remove();
         }
     }
 
@@ -75,8 +76,16 @@ public class FileServerSDKTest {
     }
 
     @Test
-    public void test3_Update() throws IOException {
-        InputStream isUpdate=null, isGet = null;
+    public void test3_Get_No_Content() {
+        ResultDO<FileDTO> resultDO = fileServerSDK.get(testId, testAccessCode, false);
+        Assert.assertTrue(resultDO.getSuccess() && resultDO.getData() != null && resultDO.getData().getInputStream() == null);
+        FileDTO fileDTO = resultDO.getData();
+        Assert.assertTrue(testFileName.equals(fileDTO.getFile_name()));
+    }
+
+    @Test
+    public void test4_Update() throws IOException {
+        InputStream isUpdate = null, isGet = null;
         ResultDO<Response> resultUpdate = null;
         ResultDO<FileDTO> resultGet = null;
         try {
@@ -85,8 +94,8 @@ public class FileServerSDKTest {
             Assert.assertTrue(resultUpdate != null && resultUpdate.getSuccess());
             resultGet = fileServerSDK.get(testId, testAccessCode);
             Assert.assertTrue(resultGet != null && resultGet.getSuccess() && resultGet.getData() != null);
-            FileDTO fileDTO=resultGet.getData();
-            Assert.assertEquals("Hello, Hucci!",new String(Util.inputStreamToBytes(fileDTO.getInputStream()),Setting.DEFAULT_CHARSET));
+            FileDTO fileDTO = resultGet.getData();
+            Assert.assertEquals("Hello, Hucci!", new String(Util.inputStreamToBytes(fileDTO.getInputStream()), Setting.DEFAULT_CHARSET));
         } finally {
             if (isUpdate != null) {
                 isUpdate.close();
@@ -98,8 +107,8 @@ public class FileServerSDKTest {
     }
 
     @Test
-    public void test4_Remove(){
-        ResultDO resultDO=fileServerSDK.remove(testId,testAccessCode);
+    public void test5_Remove() {
+        ResultDO resultDO = fileServerSDK.remove(testId, testAccessCode);
         Assert.assertTrue(resultDO.getSuccess());
     }
 

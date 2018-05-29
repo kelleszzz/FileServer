@@ -169,6 +169,7 @@ public class FileController extends BaseController {
     public Object get(@RequestParam String id,
                       @RequestParam String access_code,
                       @RequestParam(required = false) Boolean video,
+                      @RequestParam(required = false) Boolean getContent,
                       HttpServletRequest request) {
         Connection conn = null;
         InputStreamResource resource;
@@ -177,7 +178,7 @@ public class FileController extends BaseController {
         byte[] bytes = null;
         try {
             conn = fileDatabaseService.getConnection();
-            FileDTO fileDTO = fileDatabaseService.getFileDTO(id, true, conn);
+            FileDTO fileDTO = fileDatabaseService.getFileDTO(id, !Boolean.FALSE.equals(getContent), conn);
             if (fileDTO == null) {
                 return ResponseEntity.ok().body(gson.toJson(Util.getResultDO(false, Setting.STATUS_FILE_NOT_FOUND, Setting.MESSAGE_FILE_NOT_FOUND)));
             }
@@ -190,47 +191,53 @@ public class FileController extends BaseController {
             if (StringUtils.isEmpty(fileDTO.getFile_name())) {
                 fileDTO.setFile_name(fileDTO.getId());
             }
-            inputStream = fileDTO.getInputStream();
-            resource = new InputStreamResource(inputStream);
-            if (inputStream.available() != fileDTO.getSize().intValue()) {
-                logger.error("Get File, available does not match file size, available = {}, fileSize = {}", inputStream.available(), fileDTO.getSize());
-            }
-            if (request.getHeader("Range") != null) {
-                //断点续传
-                Matcher matcher = PATTERN_RANGE.matcher(request.getHeader("Range"));
-                if (!matcher.matches()) {
-                    return gson.toJson(Util.getResultDO(false, Setting.STATUS_ERROR, "Pattern not Match"));
+            //获取文件内容
+            if (!Boolean.FALSE.equals(getContent)) {
+                inputStream = fileDTO.getInputStream();
+                if (inputStream.available() != fileDTO.getSize().intValue()) {
+                    logger.error("Get File, available does not match file size, available = {}, fileSize = {}", inputStream.available(), fileDTO.getSize());
                 }
-                //[start,end]
-                long start, end;
-                //start
-                try {
-                    start = Long.valueOf(matcher.group(1));
-                } catch (NumberFormatException e) {
-                    start = 0;
+                if (request.getHeader("Range") != null) {
+                    //断点续传
+                    Matcher matcher = PATTERN_RANGE.matcher(request.getHeader("Range"));
+                    if (!matcher.matches()) {
+                        return gson.toJson(Util.getResultDO(false, Setting.STATUS_ERROR, "Pattern not Match"));
+                    }
+                    //[start,end]
+                    long start, end;
+                    //start
+                    try {
+                        start = Long.valueOf(matcher.group(1));
+                    } catch (NumberFormatException e) {
+                        start = 0;
+                    }
+                    //end
+                    try {
+                        end = Long.valueOf(matcher.group(2));
+                    } catch (NumberFormatException e) {
+                        //TODO 保证FileSize可靠
+                        end = fileDTO.getSize() - 1;
+                    }
+                    //Response Headers of Range-Request
+                    try {
+                        bytes = Util.inputStreamToBytes(inputStream, start, end);
+                    } catch (ArrayIndexOutOfBoundsException e) {
+                        logger.error("Get File, Range not Satified, Range = {}, fileDTO = {}", request.getHeader("Range"), Util.fileDTOInfo(fileDTO));
+                        return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
+                    }
+                    String contentRange = new StringBuilder("bytes ").append(start + "").append("-").append(end + "").append("/").append(fileDTO.getSize() + "").toString();
+                    builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
+                    builder.header("Content-Range", contentRange);
+                    builder.header("Accept-Ranges", "bytes");
+                    logger.info("Get File, request Range = {}, response contentRange = {}", request.getHeader("Range"), contentRange);
+                } else {
+                    //正常获取
+                    bytes = Util.inputStreamToBytes(inputStream);
+                    builder = ResponseEntity.ok();
                 }
-                //end
-                try {
-                    end = Long.valueOf(matcher.group(2));
-                } catch (NumberFormatException e) {
-                    //TODO 保证FileSize可靠
-                    end = fileDTO.getSize() - 1;
-                }
-                //Response Headers of Range-Request
-                try {
-                    bytes = Util.inputStreamToBytes(inputStream, start, end);
-                } catch (ArrayIndexOutOfBoundsException e) {
-                    logger.error("Get File, Range not Satified, Range = {}, fileDTO = {}", request.getHeader("Range"), Util.fileDTOInfo(fileDTO));
-                    return ResponseEntity.status(HttpStatus.REQUESTED_RANGE_NOT_SATISFIABLE);
-                }
-                String contentRange = new StringBuilder("bytes ").append(start + "").append("-").append(end + "").append("/").append(fileDTO.getSize() + "").toString();
-                builder = ResponseEntity.status(HttpStatus.PARTIAL_CONTENT);
-                builder.header("Content-Range", contentRange);
-                builder.header("Accept-Ranges", "bytes");
-                logger.info("Get File, request Range = {}, response contentRange = {}", request.getHeader("Range"), contentRange);
             } else {
-                //正常获取
-                bytes = Util.inputStreamToBytes(resource.getInputStream());
+                //getContent为false时
+                bytes = null;
                 builder = ResponseEntity.ok();
             }
             //Response Headers in common
