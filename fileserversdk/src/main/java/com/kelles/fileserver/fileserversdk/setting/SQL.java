@@ -3,12 +3,12 @@ package com.kelles.fileserver.fileserversdk.setting;
 public class SQL {
     public final static String CREATE_TABLE=
             "CREATE TABLE IF NOT EXISTS "+Setting.MYSQL_TABLE_NAME_FILESERVER +"(\n" +
-                    "id VARCHAR(40) PRIMARY KEY,\n" +
-                    "access_code VARCHAR(100) NOT NULL,\n" +
+                    "id VARCHAR(150) PRIMARY KEY,\n" +
+                    "access_code VARCHAR(150) NOT NULL,\n" +
                     "content LONGBLOB,\n" +
                     "create_time BIGINT,\n" +
                     "size BIGINT,\n" +
-                    "file_name VARCHAR(40) NOT NULL\n"+
+                    "file_name VARCHAR(300) NOT NULL\n"+
                     ") DEFAULT CHARSET=utf8;";
     public final static String INSERT=
             "INSERT INTO "+ Setting.MYSQL_TABLE_NAME_FILESERVER +"\n" +
