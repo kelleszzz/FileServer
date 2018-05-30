@@ -2,6 +2,7 @@ package com.kelles.fileserver.fileserversdk.sdk;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 import com.kelles.fileserver.fileserversdk.data.FileDTO;
 import com.kelles.fileserver.fileserversdk.data.ResultDO;
 import com.kelles.fileserver.fileserversdk.okhttp.InputStreamRequestBody;
@@ -12,6 +13,7 @@ import okhttp3.*;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.regex.Pattern;
 
 public class FileServerSDK implements Closeable {
@@ -75,6 +77,10 @@ public class FileServerSDK implements Closeable {
             if (response != null && response.isSuccessful() && response.body() != null) {
                 //从Header中获取FileDTO信息
                 String json = response.header(Setting.HEADER_FILEDTO_INFO, null);
+                if (json != null) {
+                    //解码
+                    json = URLDecoder.decode(json, Setting.DEFAULT_CHARSET.displayName());
+                }
                 fileDTO = Util.jsonToFileDTO(json, gson);
                 if (fileDTO == null) {
                     Util.log("Get Error, json = %s, id = %s, access_code = %s", json, id, access_code);
@@ -100,6 +106,7 @@ public class FileServerSDK implements Closeable {
             Util.log("Get Error, id = %s, access_code = %s, \nresult = %s", id, access_code, gson.toJson(Util.resultDOInfo(resultDO)));
             return Util.getResultDO(false, Setting.STATUS_ERROR);
         } finally {
+            //TODO
 //            if (response != null) response.close();
         }
     }
@@ -244,13 +251,14 @@ public class FileServerSDK implements Closeable {
      * @param response
      * @return 始终不为null
      */
-    protected ResultDO responseToResultDO(Response response) {
-        ResultDO resultDO = null;
+    protected <T> ResultDO<T> responseToResultDO(Response response) {
+        ResultDO<T> resultDO = null;
         try {
             if (response != null && response.isSuccessful() && response.body() != null) {
                 String responseBody = new String(response.body().bytes(), Setting.DEFAULT_CHARSET);
                 try {
-                    resultDO = gson.fromJson(responseBody, ResultDO.class);
+                    resultDO = gson.fromJson(responseBody, new TypeToken<ResultDO<T>>() {
+                    }.getType());
                 } catch (JsonSyntaxException e) {
                     Util.log("ResponseToResultDO Error, json = %s", responseBody);
                     resultDO = Util.getResultDO(false, Setting.STATUS_PARSE_JSON_ERROR, Setting.MESSAGE_PARSE_JSON_ERROR);

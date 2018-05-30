@@ -82,6 +82,7 @@ public class FileController extends BaseController {
                 //插入
                 if (file == null || file.getSize() == 0)
                     return gson.toJson(Util.getResultDO(false, Setting.STATUS_FILE_NOT_FOUND, Setting.MESSAGE_FILE_NOT_FOUND));
+                //实际上并不会添加到RequestParam中
                 model.addAttribute("id", id);
                 model.addAttribute("access_code", access_code);
                 model.addAttribute("file", file);
@@ -243,8 +244,10 @@ public class FileController extends BaseController {
             //Response Headers in common
             builder = builder
                     //.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileDTO.getFile_name() + "\"")
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=UTF-8''" + URLEncoder.encode(fileDTO.getFile_name(), "UTF-8"))
-                    .header(Setting.HEADER_FILEDTO_INFO, gson.toJson(Util.fileDTOInfo(fileDTO)));
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename*=" + Setting.DEFAULT_CHARSET.displayName() + "''" +
+                            URLEncoder.encode(fileDTO.getFile_name(), Setting.DEFAULT_CHARSET.displayName()))
+                    .header(Setting.HEADER_FILEDTO_INFO, URLEncoder.encode(gson.toJson(Util.fileDTOInfo(fileDTO)),
+                            Setting.DEFAULT_CHARSET.displayName()));
             //Content-Type
             if (Boolean.TRUE.equals(video)) {
                 Matcher matcher = PATTERN_FILENAME.matcher(fileDTO.getFile_name());

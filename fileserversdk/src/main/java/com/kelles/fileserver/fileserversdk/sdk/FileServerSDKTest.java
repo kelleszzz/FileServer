@@ -24,15 +24,13 @@ public class FileServerSDKTest {
     String testFileName = "congratulations.txt";
     String testContent = "Congratulations, you passed the test!";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         FileServerSDKTest test = new FileServerSDKTest();
         try {
             test.test1_Insert();
             test.test2_Get();
             test.test3_Get_No_Content();
             test.test4_Update();
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
             test.test5_Remove();
         }

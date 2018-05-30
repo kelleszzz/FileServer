@@ -66,7 +66,9 @@ public class FileDatabaseService extends DatabaseService {
             if (accessFileDTO == null) return Setting.STATUS_FILE_NOT_FOUND;
             if (!fileDTO.getId().equals(accessFileDTO.getId())) return Setting.STATUS_ACCESS_DENIED;
             //TODO 更新域
-            Util.updateDTO(fileDTO, accessFileDTO);
+            if (fileDTO != accessFileDTO) {
+                Util.updateDTO(fileDTO, accessFileDTO);
+            }
             //更新信息
             psUpdateInfo = conn.prepareStatement(SQL.UPDATE_INFO);
             psUpdateInfo.setString(1, accessFileDTO.getAccess_code());
