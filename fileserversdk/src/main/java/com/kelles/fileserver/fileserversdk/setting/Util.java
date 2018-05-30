@@ -19,7 +19,8 @@ public class Util {
 
 
     /**
-     *  利用反射,将updateDTO中所有非空的域更新到originDTO中
+     * 利用反射,将updateDTO中所有非空的域更新到originDTO中
+     *
      * @param updateDTO
      * @param originDTO
      */
@@ -173,6 +174,11 @@ public class Util {
     public static void log(String format, Object... args) {
         if (format == null) return;
         System.out.println(String.format(format, args));
+    }
+
+    public static void log(String message) {
+        if (message == null) return;
+        System.out.println(message);
     }
 
     public static boolean isEmpty(Object str) {
