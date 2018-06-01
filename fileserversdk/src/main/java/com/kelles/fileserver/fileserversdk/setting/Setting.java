@@ -41,7 +41,7 @@ public class Setting {
     public final static String PATH_REMOVE = "/remove";
 
     public final static String URL_BASIC = "http://119.23.51.183:8080";
-//    public final static String URL_BASIC = "http://localhost:8080";
+    //    public final static String URL_BASIC = "http://localhost:8080";
     public final static String URL_INSERT = PATH_FILE + PATH_INSERT;
     public final static String URL_GET = PATH_FILE + PATH_GET;
     public final static String URL_UPDATE = PATH_FILE + PATH_UPDATE;
@@ -50,4 +50,6 @@ public class Setting {
     public final static String URL_DISPLAY = PATH_UI + PATH_DISPLAY;
 
     public final static String HEADER_FILEDTO_INFO = "File-Info";
+
+    public static boolean FLAG_LOG = true;
 }

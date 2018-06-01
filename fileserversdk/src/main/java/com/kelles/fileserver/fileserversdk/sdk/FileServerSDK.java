@@ -42,7 +42,8 @@ public class FileServerSDK implements Closeable {
             }
             Util.log("Remove Error, fileDTO = %s, response_code = %s\nresult = %s", gson.toJson(Util.fileDTOInfo(fileDTO)),
                     response == null ? null : response.code(), gson.toJson(Util.resultDOInfo(resultDO)));
-            return Util.getResultDO(false, Setting.STATUS_ERROR, "Response Error, code = " + (response == null ? null : response.code()));
+            return Util.getResultDO(false, Setting.STATUS_ERROR, "Response Error, code = " + (response == null ? null : response.code()) +
+                    "Result = " + gson.toJson(resultDO));
         } catch (IOException e) {
             e.printStackTrace();
             Util.log("Remove Error, id = %s, access_code = %s\nresult = %s", id, access_code, gson.toJson(Util.resultDOInfo(resultDO)));
@@ -100,7 +101,8 @@ public class FileServerSDK implements Closeable {
             }
             Util.log("Get Error, id = %s, access_code = %s, response_code = %s\nresult = %s", id, access_code,
                     response == null ? null : response.code(), gson.toJson(Util.resultDOInfo(resultDO)));
-            return Util.getResultDO(false, Setting.STATUS_ERROR, "Response Error, code = " + (response == null ? null : response.code()));
+            return Util.getResultDO(false, Setting.STATUS_ERROR, "Response Error, code = " + (response == null ? null : response.code()) +
+                    "Result = " + gson.toJson(resultDO));
         } catch (IOException e) {
             e.printStackTrace();
             Util.log("Get Error, id = %s, access_code = %s, \nresult = %s", id, access_code, gson.toJson(Util.resultDOInfo(resultDO)));
@@ -235,7 +237,8 @@ public class FileServerSDK implements Closeable {
             }
             Util.log("Insert Error, fileDTO = %s, response_code = %s\nresult = %s", gson.toJson(Util.fileDTOInfo(fileDTO)),
                     response == null ? null : response.code(), gson.toJson(Util.resultDOInfo(resultDO)));
-            return Util.getResultDO(false, Setting.STATUS_ERROR, "Response Error, code = " + (response == null ? null : response.code()));
+            return Util.getResultDO(false, Setting.STATUS_ERROR, "Response Error, code = " + (response == null ? null : response.code()) +
+                    "Result = " + gson.toJson(resultDO));
         } catch (IOException e) {
             e.printStackTrace();
             Util.log("Insert Error, fileDTO = %s, \nresult = %s", gson.toJson(Util.fileDTOInfo(fileDTO)), gson.toJson(Util.resultDOInfo(resultDO)));
@@ -292,4 +295,7 @@ public class FileServerSDK implements Closeable {
         }
     }
 
+    public void setLog(boolean flagLog) {
+        Setting.FLAG_LOG = flagLog;
+    }
 }

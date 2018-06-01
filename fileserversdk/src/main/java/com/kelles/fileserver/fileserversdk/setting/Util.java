@@ -172,12 +172,12 @@ public class Util {
     }
 
     public static void log(String format, Object... args) {
-        if (format == null) return;
+        if (format == null || !Setting.FLAG_LOG) return;
         System.out.println(String.format(format, args));
     }
 
     public static void log(String message) {
-        if (message == null) return;
+        if (message == null || !Setting.FLAG_LOG) return;
         System.out.println(message);
     }
 
