@@ -106,6 +106,7 @@ public class FileController extends BaseController {
             if (!Util.isEmpty(file_name)) {
                 fileDTO.setFile_name(file_name);
             }
+            fileDTO.setCreate_time(System.currentTimeMillis());
             int rowsAffected = fileDatabaseService.updateFileDTO(fileDTO, infoFileDTO, conn);
             logger.info("Update File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             return gson.toJson(Util.getResultDO(rowsAffected > 0, rowsAffected));
@@ -143,6 +144,7 @@ public class FileController extends BaseController {
             if (!StringUtils.isEmpty(file_name)) {
                 fileDTO.setFile_name(file_name);
             }
+            fileDTO.setCreate_time(System.currentTimeMillis());
             int rowsAffected = fileDatabaseService.insertFileDTO(fileDTO, conn);
             logger.info("Insert File, FileDTO = {}", gson.toJson(Util.fileDTOInfo(fileDTO)));
             return gson.toJson(Util.getResultDO(rowsAffected > 0, rowsAffected));
